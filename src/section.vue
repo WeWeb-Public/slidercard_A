@@ -24,6 +24,9 @@
         </div>
 
         <div class="container hidden-mobile">
+            <div class="prev-button">
+                <wwObject tag="div" :ww-object="section.data.nextButton"></wwObject>
+            </div>
             <div class="container-center">
                 <wwObject class="card-slider-background" :ww-object="section.data.containerBackground" ww-category="background"></wwObject>
 
@@ -57,6 +60,9 @@
                         <wwObject tag="div" v-for="content in feature.contents" :key="content.uniqueId" :ww-object="content"></wwObject>
                     </wwLayoutColumn>
                 </div>
+            </div>
+            <div class="next-button">
+                <wwObject tag="div" :ww-object="section.data.prevButton"></wwObject>
             </div>
         </div>
 
@@ -182,6 +188,18 @@ export default {
             });
             needUpdate = true
         }
+        if (!this.section.data.nextButton) {
+            this.section.data.nextButton = wwLib.wwObject.getDefault({
+                type: 'ww-icon'
+            });
+            needUpdate = true
+        }
+        if (!this.section.data.prevButton) {
+            this.section.data.prevButton = wwLib.wwObject.getDefault({
+                type: 'ww-icon'
+            });
+            needUpdate = true
+        }
 
         if (!this.section.data.features) {
             this.section.data.features = []
@@ -292,7 +310,7 @@ export default {
                         this.columnWidth = { 'width': "calc(50% - 30px)" };
                         break;
                     case 3:
-                        this.columnWidth = { 'width': "calc(33.3333% - 30px)" };
+                        this.columnWidth = { 'width': "calc(30% - 30px)" };
                         break;
                     default:
                         this.columnWidth = { 'width': "calc(25% - 30px)" };
@@ -492,6 +510,23 @@ export default {
     @media (min-width: 1200px) {
         width: 90%;
     }
+    .prev-button {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+        z-index: 10;
+    }
+    .next-button {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+        z-index: 10;
+    }
+
     .container-center {
         display: flex;
         transition: transform 0.5s ease;
@@ -512,9 +547,9 @@ export default {
             margin-top: 20px;
         }
         .thumbnail-container {
-            width: 30%;
             position: relative;
-            margin: 30px 15px 30px 0;
+            margin: 30px 15px;
+
             background-color: white;
             min-height: 100px;
             overflow: hidden;
