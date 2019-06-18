@@ -4,7 +4,7 @@
 
 <!-- This is your HTML -->
 <template>
-    <div>
+    <div class="slidercard">
         <!-- wwManager:start -->
         <wwSectionEditMenu :sectionCtrl="sectionCtrl" :options="openOptions"></wwSectionEditMenu>
         <!-- wwManager:end -->
@@ -25,44 +25,53 @@
 
         <div class="container hidden-mobile">
             <div class="prev-button">
-                <wwObject tag="div" :ww-object="section.data.nextButton"></wwObject>
+                <wwObject tag="div" :ww-object="section.data.nextButton" @click="slide('left')"></wwObject>
             </div>
-            <div class="container-center">
-                <wwObject class="card-slider-background" :ww-object="section.data.containerBackground" ww-category="background"></wwObject>
 
-                <wwLayoutColumn
-                    tag="div"
-                    ww-default="ww-text"
-                    :ww-list="section.data.titles"
-                    class="content card-title"
-                    @ww-add="add(section.data.titles, $event)"
-                    @ww-remove="remove(section.data.titles, $event)"
-                >
-                    <wwObject tag="div" v-for="title in section.data.titles" :key="title.uniqueId" :ww-object="title"></wwObject>
-                </wwLayoutColumn>
-
-                <div class="thumbnail-container" v-for="(feature, index) in section.data.features" :key="feature.uniqueId" :style="columnWidth">
-                    <!-- wwManager:start -->
-                    <wwContextMenu
+            <div class="card">
+                <div class="container-center" :style="[getTotalWidth]">
+                    <wwObject class="card-slider-background" :ww-object="section.data.containerBackground" ww-category="background"></wwObject>
+                    <wwLayoutColumn
                         tag="div"
-                        class="contextmenu"
-                        v-if="editMode"
-                        @ww-add-before="addFeature(index, 'before')"
-                        @ww-add-after="addFeature(index, 'after')"
-                        @ww-remove="removeFeature(index)"
+                        ww-default="ww-text"
+                        :ww-list="section.data.titles"
+                        class="content card-title"
+                        @ww-add="add(section.data.titles, $event)"
+                        @ww-remove="remove(section.data.titles, $event)"
                     >
-                        <div class="wwi wwi-config"></div>
-                    </wwContextMenu>
-                    <!-- wwManager:end -->
-                    <wwObject class="background" :ww-object="feature.background" ww-category="background"></wwObject>
-
-                    <wwLayoutColumn tag="div" ww-default="ww-image" :ww-list="feature.contents" class="content" @ww-add="add(feature.contents, $event)" @ww-remove="remove(feature.contents, $event)">
-                        <wwObject tag="div" v-for="content in feature.contents" :key="content.uniqueId" :ww-object="content"></wwObject>
+                        <wwObject tag="div" v-for="title in section.data.titles" :key="title.uniqueId" :ww-object="title"></wwObject>
                     </wwLayoutColumn>
+
+                    <div class="thumbnail-container" v-for="(feature, index) in section.data.features" :key="feature.uniqueId" :style="[getColWidth]">
+                        <!-- wwManager:start -->
+                        <wwContextMenu
+                            tag="div"
+                            class="contextmenu"
+                            v-if="editMode"
+                            @ww-add-before="addFeature(index, 'before')"
+                            @ww-add-after="addFeature(index, 'after')"
+                            @ww-remove="removeFeature(index)"
+                        >
+                            <div class="wwi wwi-config"></div>
+                        </wwContextMenu>
+                        <!-- wwManager:end -->
+                        <wwObject class="background" :ww-object="feature.background" ww-category="background"></wwObject>
+
+                        <wwLayoutColumn
+                            tag="div"
+                            ww-default="ww-image"
+                            :ww-list="feature.contents"
+                            class="content"
+                            @ww-add="add(feature.contents, $event)"
+                            @ww-remove="remove(feature.contents, $event)"
+                        >
+                            <wwObject tag="div" v-for="content in feature.contents" :key="content.uniqueId" :ww-object="content"></wwObject>
+                        </wwLayoutColumn>
+                    </div>
                 </div>
             </div>
             <div class="next-button">
-                <wwObject tag="div" :ww-object="section.data.prevButton"></wwObject>
+                <wwObject tag="div" :ww-object="section.data.prevButton" @click="slide('right')"></wwObject>
             </div>
         </div>
 
@@ -140,9 +149,10 @@ export default {
     },
     data() {
         return {
-            maxThumbnailsPerLine: 4,
+            maxThumbnailsPerLine: 3,
             columnWidth: { 'width': 'calc(33.33% - 30px)' },
             sliderPosition: 0,
+            colsPosition: 0,
         }
     },
     computed: {
@@ -158,7 +168,19 @@ export default {
         featuresLength() {
             return this.section.data.features.length
         },
+        getColWidth() {
+            let value = 100 / this.featuresLength
+            return { 'width': 'calc(' + value + '%)' }
+        },
+        getTotalWidth() {
+            let value = 100 * this.featuresLength / this.maxThumbnailsPerLine;
+            return { 'width': 'calc(' + value + '%)', 'transform': 'translateX(-' + this.colsPosition + '%)' }
+        },
+
         mobileStyle() {
+            return { 'width': 'calc(' + this.featuresLength + ' * 100%)' }
+        },
+        laptopStyle() {
             return { 'width': 'calc(' + this.featuresLength + ' * 100%)' }
         },
         mobileTransition() {
@@ -295,12 +317,10 @@ export default {
                 else if (width < 992) {
                     this.maxThumbnailsPerLine = 2;
                 }
-                else if (width < 1200) {
+                else {
                     this.maxThumbnailsPerLine = 3;
                 }
-                else {
-                    this.maxThumbnailsPerLine = 4;
-                }
+
 
                 switch (Math.min(this.section.data.thumbnailsPerLine, this.maxThumbnailsPerLine)) {
                     case 1:
@@ -309,15 +329,29 @@ export default {
                     case 2:
                         this.columnWidth = { 'width': "calc(50% - 30px)" };
                         break;
-                    case 3:
-                        this.columnWidth = { 'width': "calc(30% - 30px)" };
-                        break;
                     default:
-                        this.columnWidth = { 'width': "calc(25% - 30px)" };
+                        this.columnWidth = { 'width': "calc(30% - 30px)" };
                         break;
                 }
             } catch (error) {
                 wwLib.wwLog.error('ERROR : ', error);
+            }
+        },
+
+        slide(direction) {
+            console.log('direction:', direction)
+            console.log('this.featuresLength :', this.featuresLength)
+            console.log('this.colsPosition:', this.colsPosition)
+            if (direction === 'right') {
+                if (this.colsPosition >= 100 * (this.featuresLength - 1)) { return; }
+
+                this.colsPosition += 100 / this.featuresLength;
+            } else {
+                if (this.colsPosition <= 0) { return; }
+                this.colsPosition -= 100 / this.featuresLength;
+            }
+            if (this.colsPosition < 1) {
+                this.colsPosition = 0;
             }
         },
         /* wwManager:start */
@@ -484,144 +518,145 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <!-- Add lang="scss" or others to use computed CSS -->
 <style lang='scss' scoped>
-.background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-}
-
-.top-ww-objs,
-.bottom-ww-objs {
+.slidercard {
     position: relative;
-    .top-ww-obj,
-    .bottom-ww-obj {
-        position: relative;
-    }
-}
-
-.container {
-    position: relative;
-    @media (min-width: 768px) {
-        width: 80%;
-    }
-
-    @media (min-width: 1200px) {
-        width: 90%;
-    }
-    .prev-button {
+    .background {
         position: absolute;
+        top: 0;
         left: 0;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        cursor: pointer;
-        z-index: 10;
-    }
-    .next-button {
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        cursor: pointer;
-        z-index: 10;
+        height: 100%;
+        width: 100%;
     }
 
-    .container-center {
-        display: flex;
-        transition: transform 0.5s ease;
-        @media (min-width: 1024px) {
-            justify-content: center;
-            flex-wrap: wrap;
+    .top-ww-objs,
+    .bottom-ww-objs {
+        position: relative;
+        margin: 10px 0;
+        .top-ww-obj,
+        .bottom-ww-obj {
+            position: relative;
         }
-        .card-slider-background {
+    }
+
+    .container {
+        position: relative;
+        @media (min-width: 768px) {
+            width: 80%;
+        }
+
+        @media (min-width: 1200px) {
+            width: 80%;
+        }
+        .prev-button {
             position: absolute;
-            top: 0;
             left: 0;
-            height: 100%;
-            width: 100%;
-        }
-        .card-title {
-            position: relative;
-            width: 100%;
-            margin-top: 20px;
-        }
-        .thumbnail-container {
-            position: relative;
-            margin: 30px 15px;
-
-            background-color: white;
-            min-height: 100px;
-            overflow: hidden;
-            .forehead-banner {
-                position: relative;
-            }
-            .background {
-                border-radius: 7px;
-                overflow: hidden;
-            }
-
-            .content {
-                position: relative;
-            }
-            /* wwManager:start */
-
-            .contextmenu {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 30px;
-                height: 30px;
-                color: white;
-                background-color: #ef811a;
-                border-radius: 100%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-size: 1.2rem;
-                cursor: pointer;
-                z-index: 2;
-            }
-            .contextmenu-center {
-                left: calc(50% - 15px);
-            }
-            /* wwManager:end */
-        }
-    }
-}
-
-.content-dots-wrapper {
-    display: flex;
-    list-style: none;
-    justify-content: center;
-    position: relative;
-    padding-bottom: 15px;
-    margin-top: 20px;
-
-    .content-dot {
-        margin-right: 15px;
-        border-radius: 100%;
-        border-width: 2px;
-        border-style: solid;
-        .dot {
+            top: 50%;
+            transform: translate(-50%, -50%);
             cursor: pointer;
-            width: 15px;
-            height: 15px;
-            pointer-events: all;
+            z-index: 10;
+        }
+        .next-button {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translate(calc(-50% + 40px), -50%);
+            cursor: pointer;
+            z-index: 10;
+        }
+        .card {
+            overflow-x: hidden;
+            position: relative;
+            .container-center {
+                display: flex;
+                transition: transform 0.5s ease;
+                @media (min-width: 1024px) {
+                    justify-content: center;
+                    flex-wrap: wrap;
+                }
+                .card-slider-background {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    height: 100%;
+                    width: 100%;
+                }
+                .card-title {
+                    position: relative;
+                    width: 100%;
+                    margin-top: 20px;
+                }
+                .thumbnail-container {
+                    position: relative;
+                    background-color: white;
+                    min-height: 100px;
+                    overflow: hidden;
+                    .background {
+                        border-radius: 7px;
+                        overflow: hidden;
+                    }
+                    .content {
+                        position: relative;
+                    }
+                    /* wwManager:start */
+
+                    .contextmenu {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 30px;
+                        height: 30px;
+                        color: white;
+                        background-color: #ef811a;
+                        border-radius: 100%;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        font-size: 1.2rem;
+                        cursor: pointer;
+                        z-index: 2;
+                    }
+                    .contextmenu-center {
+                        left: calc(50% - 15px);
+                    }
+                    /* wwManager:end */
+                }
+            }
         }
     }
-}
-.hidden-mobile {
-    display: none;
-    @media (min-width: 1024px) {
-        display: block;
+
+    .content-dots-wrapper {
+        display: flex;
+        list-style: none;
+        justify-content: center;
+        position: relative;
+        padding-bottom: 15px;
+        margin-top: 20px;
+
+        .content-dot {
+            margin-right: 15px;
+            border-radius: 100%;
+            border-width: 2px;
+            border-style: solid;
+            .dot {
+                cursor: pointer;
+                width: 15px;
+                height: 15px;
+                pointer-events: all;
+            }
+        }
     }
-}
-.mobile-wrapper {
-    display: block;
-    position: relative;
-    @media (min-width: 1024px) {
+    .hidden-mobile {
         display: none;
+        @media (min-width: 1024px) {
+            display: block;
+        }
+    }
+    .mobile-wrapper {
+        display: block;
+        position: relative;
+        @media (min-width: 1024px) {
+            display: none;
+        }
     }
 }
 </style>
