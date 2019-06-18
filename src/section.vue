@@ -23,98 +23,58 @@
             </wwLayoutColumn>
         </div>
 
-        <div class="container hidden-mobile">
-            <div class="prev-button">
-                <wwObject tag="div" :ww-object="section.data.nextButton" @click="slide('left')"></wwObject>
-            </div>
-
+        <div class="container">
             <div class="card">
-                <div class="container-center" :style="[getTotalWidth]">
-                    <wwObject class="card-slider-background" :ww-object="section.data.containerBackground" ww-category="background"></wwObject>
-                    <wwLayoutColumn
-                        tag="div"
-                        ww-default="ww-text"
-                        :ww-list="section.data.titles"
-                        class="content card-title"
-                        @ww-add="add(section.data.titles, $event)"
-                        @ww-remove="remove(section.data.titles, $event)"
-                    >
-                        <wwObject tag="div" v-for="title in section.data.titles" :key="title.uniqueId" :ww-object="title"></wwObject>
-                    </wwLayoutColumn>
+                <wwObject class="card-slider-background" :ww-object="section.data.containerBackground" ww-category="background"></wwObject>
+                <wwLayoutColumn
+                    tag="div"
+                    ww-default="ww-text"
+                    :ww-list="section.data.titles"
+                    class="content card-title"
+                    @ww-add="add(section.data.titles, $event)"
+                    @ww-remove="remove(section.data.titles, $event)"
+                >
+                    <wwObject tag="div" v-for="title in section.data.titles" :key="title.uniqueId" :ww-object="title"></wwObject>
+                </wwLayoutColumn>
 
-                    <div class="thumbnail-container" v-for="(feature, index) in section.data.features" :key="feature.uniqueId" :style="[getColWidth]">
-                        <!-- wwManager:start -->
-                        <wwContextMenu
-                            tag="div"
-                            class="contextmenu"
-                            v-if="editMode"
-                            @ww-add-before="addFeature(index, 'before')"
-                            @ww-add-after="addFeature(index, 'after')"
-                            @ww-remove="removeFeature(index)"
-                        >
-                            <div class="wwi wwi-config"></div>
-                        </wwContextMenu>
-                        <!-- wwManager:end -->
-                        <wwObject class="background" :ww-object="feature.background" ww-category="background"></wwObject>
+                <v-touch ref="swiper" :enabled="!editMode" @swipeleft="slide('right')" @swiperight="slide('left')" :swipe-options="{ direction: 'horizontal', threshold: 10, velocity: 0.2 }">
+                    <div class="container-center" :style="[getTotalWidth]">
+                        <div class="thumbnail-container" v-for="(feature, index) in section.data.features" :key="feature.uniqueId" :style="[getColWidth]">
+                            <!-- wwManager:start -->
+                            <wwContextMenu
+                                tag="div"
+                                class="contextmenu"
+                                v-if="editMode"
+                                @ww-add-before="addFeature(index, 'before')"
+                                @ww-add-after="addFeature(index, 'after')"
+                                @ww-remove="removeFeature(index)"
+                            >
+                                <div class="wwi wwi-config"></div>
+                            </wwContextMenu>
+                            <!-- wwManager:end -->
+                            <wwObject class="background" :ww-object="feature.background" ww-category="background"></wwObject>
 
-                        <wwLayoutColumn
-                            tag="div"
-                            ww-default="ww-image"
-                            :ww-list="feature.contents"
-                            class="content"
-                            @ww-add="add(feature.contents, $event)"
-                            @ww-remove="remove(feature.contents, $event)"
-                        >
-                            <wwObject tag="div" v-for="content in feature.contents" :key="content.uniqueId" :ww-object="content"></wwObject>
-                        </wwLayoutColumn>
+                            <wwLayoutColumn
+                                tag="div"
+                                ww-default="ww-image"
+                                :ww-list="feature.contents"
+                                class="content"
+                                @ww-add="add(feature.contents, $event)"
+                                @ww-remove="remove(feature.contents, $event)"
+                            >
+                                <wwObject tag="div" v-for="content in feature.contents" :key="content.uniqueId" :ww-object="content"></wwObject>
+                            </wwLayoutColumn>
+                        </div>
                     </div>
-                </div>
+                </v-touch>
             </div>
-            <div class="next-button">
-                <wwObject tag="div" :ww-object="section.data.prevButton" @click="slide('right')"></wwObject>
+            <div v-if="canSwipeLeft" class="prev-button">
+                <wwObject tag="div" :ww-object="section.data.prevButton" @click="slide('left')"></wwObject>
+            </div>
+            <div v-if="canSwipeRight" class="next-button">
+                <wwObject tag="div" :ww-object="section.data.nextButton" @click="slide('right')"></wwObject>
             </div>
         </div>
-
-        <v-touch
-            ref="swiper"
-            :enabled="!editMode"
-            @swipeleft="nextSlide()"
-            @swiperight="prevSlide()"
-            :swipe-options="{ direction: 'horizontal', threshold: 10, velocity: 0.2 }"
-            class="container mobile-wrapper"
-        >
-            <div class="container-center" :style="[mobileStyle, mobileTransition]">
-                <div class="thumbnail-container" v-for="feature in section.data.features" :key="feature.uniqueId" :style="cardWidth">
-                    <!-- wwManager:start -->
-                    <wwContextMenu
-                        tag="div"
-                        class="contextmenu contextmenu-center"
-                        v-if="editMode"
-                        @ww-add-before="addFeature(index, 'before')"
-                        @ww-add-after="addFeature(index, 'after')"
-                        @ww-remove="removeFeature(index)"
-                    >
-                        <div class="wwi wwi-config"></div>
-                    </wwContextMenu>
-                    <!-- wwManager:end -->
-                    <wwObject class="background" :ww-object="feature.background" ww-category="background"></wwObject>
-                    <!-- feature -->
-                    <wwLayoutColumn tag="div" ww-default="ww-image" :ww-list="feature.contents" class="content" @ww-add="add(feature.contents, $event)" @ww-remove="remove(feature.contents, $event)">
-                        <wwObject tag="div" v-for="content in feature.contents" :key="content.uniqueId" :ww-object="content"></wwObject>
-                    </wwLayoutColumn>
-                </div>
-            </div>
-            <div class="content-dots-wrapper">
-                <li
-                    v-for="(dot, index) in section.data.features"
-                    class="content-dot"
-                    :style="{'background': ((sliderPosition == index) ? section.data.dotColor : ''), 'border-color': section.data.dotColor}"
-                    :key="dot.uniqueId"
-                >
-                    <div class="dot" @click="switchToIndex(sliderPosition, index)"></div>
-                </li>
-            </div>
-        </v-touch>
 
         <!--BOTTOM WWOBJS-->
         <div class="bottom-ww-objs">
@@ -188,7 +148,14 @@ export default {
         },
         cardWidth() {
             return { 'width': 'calc(' + (100 / this.featuresLength) + '% - 50px)' }
-        }
+        },
+        canSwipeRight() {
+            return this.colsPosition < (100 - (100 / this.featuresLength * this.maxThumbnailsPerLine))
+        },
+        canSwipeLeft() {
+            return this.colsPosition > 0 //fix
+        },
+
     },
 
     created() {
@@ -273,28 +240,7 @@ export default {
             this.setThumbnailsPerLine();
             window.addEventListener("resize", this.setThumbnailsPerLine);
         },
-        nextSlide() {
-            try {
-                this.sliderPosition++
-                if (this.sliderPosition > this.featuresLength - 1)
-                    this.sliderPosition = 0
-                this.$forceUpdate()
-            } catch (error) {
-                wwLib.wwLog.error('ERROR : ', error);
-            }
-        },
 
-        prevSlide() {
-            try {
-                this.sliderPosition--
-                if (this.sliderPosition < 0)
-                    this.sliderPosition = this.featuresLength - 1
-                this.$forceUpdate()
-            } catch (error) {
-                wwLib.wwLog.error('ERROR : ', error);
-            }
-
-        },
 
         switchToIndex(index, position) {
             try {
@@ -303,9 +249,7 @@ export default {
                 }
             } catch (error) {
                 wwLib.wwLog.error('ERROR : ', error);
-
             }
-
         },
 
         setThumbnailsPerLine() {
@@ -339,21 +283,33 @@ export default {
         },
 
         slide(direction) {
-            console.log('direction:', direction)
-            console.log('this.featuresLength :', this.featuresLength)
-            console.log('this.colsPosition:', this.colsPosition)
-            if (direction === 'right') {
-                if (this.colsPosition >= 100 * (this.featuresLength - 1)) { return; }
-
-                this.colsPosition += 100 / this.featuresLength;
-            } else {
-                if (this.colsPosition <= 0) { return; }
-                this.colsPosition -= 100 / this.featuresLength;
+            if (direction === 'right' && this.canSwipeRight) {
+                if (this.colsPosition < 100 * (this.featuresLength - 1))
+                    this.colsPosition += 100 / this.featuresLength;
+            } else if (direction === 'right' && !this.canSwipeRight) {
+                this.colsPosition = 0;
+            }
+            else {
+                if (this.colsPosition > 0)
+                    this.colsPosition -= 100 / this.featuresLength;
             }
             if (this.colsPosition < 1) {
                 this.colsPosition = 0;
             }
         },
+        /*       slide(direction) {
+                  if (direction === 'right') {
+                      if (this.colsPosition >= 100 * (this.featuresLength - 1)) { return; }
+      
+                      this.colsPosition += 100 / this.featuresLength;
+                  } else {
+                      if (this.colsPosition <= 0) { return; }
+                      this.colsPosition -= 100 / this.featuresLength;
+                  }
+                  if (this.colsPosition < 1) {
+                      this.colsPosition = 0;
+                  }
+              }, */
         /* wwManager:start */
         add(list, options) {
             try {
@@ -363,7 +319,6 @@ export default {
                 wwLib.wwLog.error('ERROR : ', error);
             }
         },
-
 
         /* add a new section to the slider */
         addFeature(_index, where) {
@@ -389,33 +344,6 @@ export default {
             } catch (error) {
                 wwLib.wwLog.error('ERROR : ', error);
 
-            }
-        },
-
-        /* add picture */
-
-        addElement(list, _index, where) {
-            try {
-                const up = (where == 'after') ? parseInt(1) : 0;
-                const index = _index + up
-                let newCopie = JSON.parse(JSON.stringify(list[0]))
-
-                wwLib.wwUtils.changeUniqueIds(newCopie)
-                list.splice(index, 0, newCopie);
-                this.sectionCtrl.update(this.section);
-            } catch (error) {
-                wwLib.wwLog.error('ERROR : ', error);
-            }
-        },
-
-        removeElement(list, index) {
-            try {
-                if (list.length > 1) {
-                    list.splice(index, 1);
-                    this.sectionCtrl.update(this.section);
-                }
-            } catch (error) {
-                wwLib.wwLog.error('ERROR : ', error);
             }
         },
 
@@ -475,7 +403,6 @@ export default {
                     data: {
                         columnPerLine: this.section.data.thumbnailsPerLine,
                         section: this.section,
-
                     },
                 }
 
@@ -540,6 +467,7 @@ export default {
 
     .container {
         position: relative;
+        width: 90%;
         @media (min-width: 768px) {
             width: 80%;
         }
@@ -556,30 +484,32 @@ export default {
             z-index: 10;
         }
         .next-button {
+            display: block;
             position: absolute;
             right: 0;
             top: 50%;
-            transform: translate(calc(-50% + 40px), -50%);
+            transform: translate(calc(-50% + 30px), -50%);
             cursor: pointer;
             z-index: 10;
         }
         .card {
             overflow-x: hidden;
             position: relative;
+            .card-slider-background {
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 100%;
+            }
             .container-center {
                 display: flex;
-                transition: transform 0.5s ease;
+                transition: transform 0.4s ease;
                 @media (min-width: 1024px) {
                     justify-content: center;
                     flex-wrap: wrap;
                 }
-                .card-slider-background {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    height: 100%;
-                    width: 100%;
-                }
+
                 .card-title {
                     position: relative;
                     width: 100%;
@@ -645,12 +575,7 @@ export default {
             }
         }
     }
-    .hidden-mobile {
-        display: none;
-        @media (min-width: 1024px) {
-            display: block;
-        }
-    }
+
     .mobile-wrapper {
         display: block;
         position: relative;

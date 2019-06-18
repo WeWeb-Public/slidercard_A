@@ -2,12 +2,12 @@ export function getNewFeature() {
     try {
         const newFeature = {
             "background": {
-                "uniqueId": 502524078,
+                "uniqueId": 4817068315,
                 "wwVersion": 3,
                 "content": {
                     "type": "ww-color",
                     "data": {
-                        "backgroundColor": "transparent",
+                        "backgroundColor": "#00000000",
                         "style": {
                             "borderRadius": 0,
                             "borderWidth": 0,
@@ -21,7 +21,8 @@ export function getNewFeature() {
                                 "c": ""
                             }
                         },
-                        "color": "white"
+                        "color": "white",
+                        "gradient": null
                     }
                 },
                 "link": {
@@ -51,16 +52,16 @@ export function getNewFeature() {
             },
             "contents": [
                 {
-                    "uniqueId": 2229729358,
+                    "uniqueId": 4411658075,
                     "wwVersion": 3,
                     "content": {
                         "type": "ww-image",
                         "data": {
-                            "url": "https://wewebapp.s3.eu-west-3.amazonaws.com/designs/7/sections/JcOgNd0XThGZNOpudphOJdAdummfWnQ1.png",
+                            "url": "https://cdn.weweb.app/designs/7/sections/5sOBdq5MrNLoTvR7OLAi8fjaYDm4hgPd.png",
                             "alt": "",
                             "position": {
-                                "x": 0,
-                                "y": 0
+                                "x": -0.3929273084479371,
+                                "y": 2.1611001964636545
                             },
                             "pos": {
                                 "left": "0%",
@@ -68,7 +69,7 @@ export function getNewFeature() {
                                 "width": "100%",
                                 "height": "100%"
                             },
-                            "zoom": 1.051916545366327,
+                            "zoom": 1,
                             "style": {
                                 "borderRadius": 0,
                                 "borderWidth": 0,
@@ -106,23 +107,67 @@ export function getNewFeature() {
                                 50,
                                 50
                             ],
-                            "crop": "95px100p@2px0p"
+                            "crop": "100px25p@0px35p"
                         }
                     },
                     "link": {
                         "type": "none",
                         "data": {}
                     },
-                    "ratio": -1,
+                    "ratio": 25,
                     "paddings": {
                         "xs": {
+                            "top": 0,
+                            "left": 10,
+                            "right": 10,
+                            "bottom": 0
+                        },
+                        "md": {
                             "top": 0,
                             "left": 0,
                             "right": 0,
                             "bottom": 0
+                        }
+                    },
+                    "hidden": false,
+                    "tags": [],
+                    "children": {},
+                    "data": {},
+                    "anim": {}
+                },
+                {
+                    "uniqueId": 7514743030,
+                    "wwVersion": 3,
+                    "content": {
+                        "type": "ww-text",
+                        "data": {
+                            "text": {
+                                "fr": "Nouveau texte",
+                                "en": "<div style=\"text-align: center;\"><span style=\"text-align: initial;\">Ut enim ad minima veniam</span></div>"
+                            },
+                            "tag": "div",
+                            "align": "",
+                            "font": "",
+                            "size": "",
+                            "color": "",
+                            "classes": [],
+                            "children": []
+                        }
+                    },
+                    "link": {
+                        "type": "none",
+                        "data": {}
+                    },
+                    "ratio": -1,
+                    "paddings": {
+                        "xs": {
+                            "top": 80,
+                            "left": 10,
+                            "right": 10,
+                            "bottom": 0
                         },
                         "md": {
-                            "top": 0,
+                            "top": 100,
                             "left": 0,
                             "right": 0,
                             "bottom": 0
@@ -135,211 +180,99 @@ export function getNewFeature() {
                     "anim": {}
                 },
                 {
-                    "uniqueId": 14174302750,
+                    "uniqueId": 8122674206,
                     "wwVersion": 3,
                     "content": {
-                        "type": "ww-text",
+                        "type": "ww-button",
                         "data": {
                             "text": {
-                                "fr": "<font face=\"Open Sans, sans-serif\"><b>Inventore veritatis</b></font>"
-                            },
-                            "tag": "div",
-                            "align": "",
-                            "font": "",
-                            "size": "",
-                            "color": "",
-                            "classes": [],
-                            "children": []
-                        }
-                    },
-                    "link": {
-                        "type": "none",
-                        "data": {}
-                    },
-                    "ratio": -1,
-                    "paddings": {
-                        "xs": {
-                            "top": 20,
-                            "left": 15,
-                            "right": 15,
-                            "bottom": 0
-                        },
-                        "md": {
-                            "top": 20,
-                            "left": 15,
-                            "right": 15,
-                            "bottom": 0
-                        }
-                    },
-                    "hidden": false,
-                    "tags": [],
-                    "children": {},
-                    "data": {},
-                    "anim": {}
-                },
-                {
-                    "uniqueId": 9123606428,
-                    "wwVersion": 3,
-                    "content": {
-                        "type": "ww-text",
-                        "data": {
-                            "text": {
-                                "fr": "<font face=\"Open Sans, sans-serif\" color=\"#4a4a4a\"> Veritatis et quasi architecto beatae vitae dicta sunt explicabo</font>"
-                            },
-                            "tag": "div",
-                            "align": "",
-                            "font": "",
-                            "size": "",
-                            "color": "",
-                            "classes": [],
-                            "children": []
-                        }
-                    },
-                    "link": {
-                        "type": "none",
-                        "data": {}
-                    },
-                    "ratio": -1,
-                    "paddings": {
-                        "xs": {
-                            "top": 5,
-                            "left": 15,
-                            "right": 15,
-                            "bottom": 0
-                        },
-                        "md": {
-                            "top": 5,
-                            "left": 15,
-                            "right": 15,
-                            "bottom": 0
-                        }
-                    },
-                    "hidden": false,
-                    "tags": [],
-                    "children": {},
-                    "data": {},
-                    "anim": {}
-                },
-                {
-                    "uniqueId": 2022432867,
-                    "wwVersion": 3,
-                    "content": {
-                        "type": "ww-text",
-                        "data": {
-                            "text": {
-                                "fr": "<font face=\"Open Sans, sans-serif\">Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo&nbsp;</font><br>"
-                            },
-                            "tag": "div",
-                            "align": "",
-                            "font": "",
-                            "size": "",
-                            "color": "",
-                            "classes": [],
-                            "children": []
-                        }
-                    },
-                    "link": {
-                        "type": "none",
-                        "data": {}
-                    },
-                    "ratio": -1,
-                    "paddings": {
-                        "xs": {
-                            "top": 20,
-                            "left": 15,
-                            "right": 15,
-                            "bottom": 0
-                        },
-                        "md": {
-                            "top": 20,
-                            "left": 15,
-                            "right": 15,
-                            "bottom": 0
-                        }
-                    },
-                    "hidden": false,
-                    "tags": [],
-                    "children": {},
-                    "data": {},
-                    "anim": {}
-                },
-                {
-                    "new": false,
-                    "anim": {},
-                    "data": {},
-                    "link": {
-                        "data": {},
-                        "type": "none"
-                    },
-                    "tags": [],
-                    "ratio": -1,
-                    "hidden": false,
-                    "content": {
-                        "data": {
-                            "text": {
-                                "uniqueId": 416508178,
-                                "new": false,
-                                "anim": {},
-                                "data": {},
-                                "link": {
-                                    "data": {},
-                                    "type": "none"
-                                },
-                                "tags": [],
-                                "ratio": -1,
-                                "hidden": false,
+                                "uniqueId": 10171308505,
+                                "wwVersion": 3,
                                 "content": {
+                                    "type": "ww-text",
                                     "data": {
+                                        "text": {
+                                            "fr": "Nouveau bouton",
+                                            "en": "<font color=\"#ffffff\" face=\"Open Sans, sans-serif\">Call to action</font>"
+                                        },
                                         "tag": "div",
+                                        "align": "",
                                         "font": "",
                                         "size": "",
-                                        "text": {
-                                            "en": "<font face=\"Open Sans, sans-serif\" color=\"#9013fe\"><b>Lire Le cas client</b></font>",
-                                            "fr": "<font face=\"Open Sans, sans-serif\" color=\"#00a3c7\"><b>Lire le cas client</b></font>"
-                                        },
-                                        "align": "",
                                         "color": "",
                                         "classes": [],
                                         "children": []
-                                    },
-                                    "type": "ww-text"
+                                    }
                                 },
+                                "link": {
+                                    "type": "none",
+                                    "data": {}
+                                },
+                                "ratio": -1,
+                                "paddings": {
+                                    "xs": {
+                                        "top": 0,
+                                        "left": 0,
+                                        "right": 0,
+                                        "bottom": 0
+                                    },
+                                    "md": {
+                                        "top": 0,
+                                        "left": 0,
+                                        "right": 0,
+                                        "bottom": 0
+                                    }
+                                },
+                                "hidden": false,
+                                "tags": [],
                                 "children": {},
-                                "paddings": {},
-                                "wwVersion": 3
+                                "data": {},
+                                "anim": {}
                             },
                             "style": {
-                                "padding": 15,
+                                "backgroundColor": "#90CAF9",
                                 "gradient": {},
-                                "boxShadow": {
-                                    "b": "5",
-                                    "c": "#90CAF9",
-                                    "s": "0",
-                                    "x": 0,
-                                    "y": 0
-                                },
-                                "borderColor": "#FFFFFF",
-                                "borderStyle": "none",
+                                "borderRadius": 50,
                                 "borderWidth": 0,
-                                "borderRadius": 5,
-                                "backgroundColor": "#FFFFFF",
-                                "justify": "flex-start"
+                                "borderColor": "#90CAF9",
+                                "borderStyle": "none",
+                                "padding": 20,
+                                "justify": null,
+                                "boxShadow": {
+                                    "x": 0,
+                                    "y": 0,
+                                    "b": 0,
+                                    "s": 0,
+                                    "c": ""
+                                }
                             },
                             "fullWidth": false
-                        },
-                        "type": "ww-button"
-                    },
-                    "children": {},
-                    "paddings": {
-                        "xs": {
-                            "top": 30,
-                            "left": 15,
-                            "right": 15,
-                            "bottom": 30
                         }
                     },
-                    "uniqueId": 4332756200,
-                    "wwVersion": 3
+                    "link": {
+                        "type": "none",
+                        "data": {}
+                    },
+                    "ratio": -1,
+                    "paddings": {
+                        "xs": {
+                            "top": 20,
+                            "left": 10,
+                            "right": 10,
+                            "bottom": 50
+                        },
+                        "md": {
+                            "top": 20,
+                            "left": 0,
+                            "right": 0,
+                            "bottom": 50
+                        }
+                    },
+                    "hidden": false,
+                    "tags": [],
+                    "children": {},
+                    "data": {},
+                    "anim": {}
                 }
             ]
         }
