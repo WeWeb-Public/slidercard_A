@@ -261,7 +261,21 @@ export default {
                     this.colsPosition = 0;
                 }
             }
-
+        },
+        editSlide(direction) {
+            if (direction === 'right' && this.canSwipeRight) {
+                if (this.colsPosition < 100 * (this.featuresLength - 1))
+                    this.colsPosition += 100 / this.featuresLength;
+            } else if (direction === 'right' && !this.canSwipeRight) {
+                this.colsPosition = 0;
+            }
+            else {
+                if (this.colsPosition > 0)
+                    this.colsPosition -= 100 / this.featuresLength;
+            }
+            if (this.colsPosition < 1) {
+                this.colsPosition = 0;
+            }
         },
 
         /* wwManager:start */
@@ -283,6 +297,7 @@ export default {
 
                 this.section.data.features.splice(index, 0, newCard);
                 this.sectionCtrl.update(this.section);
+                this.editSlide('right')
             } catch (err) {
                 wwLib.wwLog.error('ERROR : ', error);
             }
@@ -294,7 +309,7 @@ export default {
                     this.addFeature(0, 'after');
                 }
                 this.sectionCtrl.update(this.section);
-                this.slide('left')
+                this.editSlide('left')
             } catch (error) {
                 wwLib.wwLog.error('ERROR : ', error);
 
