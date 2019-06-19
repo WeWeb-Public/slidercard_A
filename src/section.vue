@@ -4,7 +4,7 @@
 
 <!-- This is your HTML -->
 <template>
-    <div class="slidercard">
+    <div class="slidercard" :style="customStyle">
         <!-- wwManager:start -->
         <wwSectionEditMenu :sectionCtrl="sectionCtrl" :options="openOptions"></wwSectionEditMenu>
         <!-- wwManager:end -->
@@ -68,7 +68,7 @@
                     </div>
                 </v-touch>
             </div>
-            <div v-if="canSwipeLeft" class="prev-button">
+            <div v-if="canSwipeLeft " class="prev-button">
                 <wwObject tag="div" :ww-object="section.data.prevButton" @click="slide('left')"></wwObject>
             </div>
             <div v-if="canSwipeRight" class="next-button">
@@ -110,8 +110,6 @@ export default {
     data() {
         return {
             maxThumbnailsPerLine: 3,
-            columnWidth: { 'width': 'calc(33.33% - 30px)' },
-            sliderPosition: 0,
             colsPosition: 0,
         }
     },
@@ -136,25 +134,19 @@ export default {
             let value = 100 * this.featuresLength / this.maxThumbnailsPerLine;
             return { 'width': 'calc(' + value + '%)', 'transform': 'translateX(-' + this.colsPosition + '%)' }
         },
-
-        mobileStyle() {
-            return { 'width': 'calc(' + this.featuresLength + ' * 100%)' }
-        },
-        laptopStyle() {
-            return { 'width': 'calc(' + this.featuresLength + ' * 100%)' }
-        },
-        mobileTransition() {
-            return { 'transform': 'translate(calc(' + (- this.sliderPosition * (100 / this.featuresLength)) + '% + ' + this.sliderPosition * 32 + 'px ), 0)' }
-        },
-        cardWidth() {
-            return { 'width': 'calc(' + (100 / this.featuresLength) + '% - 50px)' }
-        },
         canSwipeRight() {
             return this.colsPosition < (100 - (100 / this.featuresLength * this.maxThumbnailsPerLine))
         },
         canSwipeLeft() {
             return this.colsPosition > 0 //fix
         },
+        customStyle() {
+            return {
+                '--cardBorderRadius': this.section.data.cardBorderRadius + 'px',
+                '--shadowColor': this.section.data.shadowColor,
+                '--shadowColorAfter': this.section.data.shadowColorAfter
+            }
+        }
 
     },
 
@@ -163,7 +155,6 @@ export default {
         let needUpdate = false
         //Initialize section data
         this.section.data = this.section.data || {};
-        this.section.data.dotColor = this.section.data.dotColor || "#9013FE"
 
         if (!this.section.data.bg) {
             this.section.data.bg = wwLib.wwObject.getDefault({
@@ -197,10 +188,6 @@ export default {
         if (!this.section.data.titles) {
             this.section.data.titles = []
             needUpdate = true
-        }
-        if (!this.section.data.thumbnailsPerLine) {
-            this.section.data.thumbnailsPerLine = 4;
-            needUpdate = true;
         }
 
         if (_.isEmpty(this.section.data.features)) {
@@ -240,18 +227,6 @@ export default {
             this.setThumbnailsPerLine();
             window.addEventListener("resize", this.setThumbnailsPerLine);
         },
-
-
-        switchToIndex(index, position) {
-            try {
-                if (position < this.section.data.features.length && index != position) {
-                    this.sliderPosition = position
-                }
-            } catch (error) {
-                wwLib.wwLog.error('ERROR : ', error);
-            }
-        },
-
         setThumbnailsPerLine() {
             try {
                 let width = window.innerWidth;
@@ -265,51 +240,30 @@ export default {
                     this.maxThumbnailsPerLine = 3;
                 }
 
-
-                switch (Math.min(this.section.data.thumbnailsPerLine, this.maxThumbnailsPerLine)) {
-                    case 1:
-                        this.columnWidth = { 'width': "calc(100% - 30px)" };
-                        break;
-                    case 2:
-                        this.columnWidth = { 'width': "calc(50% - 30px)" };
-                        break;
-                    default:
-                        this.columnWidth = { 'width': "calc(30% - 30px)" };
-                        break;
-                }
             } catch (error) {
                 wwLib.wwLog.error('ERROR : ', error);
             }
         },
 
         slide(direction) {
-            if (direction === 'right' && this.canSwipeRight) {
-                if (this.colsPosition < 100 * (this.featuresLength - 1))
-                    this.colsPosition += 100 / this.featuresLength;
-            } else if (direction === 'right' && !this.canSwipeRight) {
-                this.colsPosition = 0;
+            if (!this.editMode) {
+                if (direction === 'right' && this.canSwipeRight) {
+                    if (this.colsPosition < 100 * (this.featuresLength - 1))
+                        this.colsPosition += 100 / this.featuresLength;
+                } else if (direction === 'right' && !this.canSwipeRight) {
+                    this.colsPosition = 0;
+                }
+                else {
+                    if (this.colsPosition > 0)
+                        this.colsPosition -= 100 / this.featuresLength;
+                }
+                if (this.colsPosition < 1) {
+                    this.colsPosition = 0;
+                }
             }
-            else {
-                if (this.colsPosition > 0)
-                    this.colsPosition -= 100 / this.featuresLength;
-            }
-            if (this.colsPosition < 1) {
-                this.colsPosition = 0;
-            }
+
         },
-        /*       slide(direction) {
-                  if (direction === 'right') {
-                      if (this.colsPosition >= 100 * (this.featuresLength - 1)) { return; }
-      
-                      this.colsPosition += 100 / this.featuresLength;
-                  } else {
-                      if (this.colsPosition <= 0) { return; }
-                      this.colsPosition -= 100 / this.featuresLength;
-                  }
-                  if (this.colsPosition < 1) {
-                      this.colsPosition = 0;
-                  }
-              }, */
+
         /* wwManager:start */
         add(list, options) {
             try {
@@ -340,7 +294,7 @@ export default {
                     this.addFeature(0, 'after');
                 }
                 this.sectionCtrl.update(this.section);
-                this.prevSlide()
+                this.slide('left')
             } catch (error) {
                 wwLib.wwLog.error('ERROR : ', error);
 
@@ -352,40 +306,51 @@ export default {
 
                 wwLib.wwPopups.addStory('WWSLIDER_CUSTOM', {
                     title: {
-                        en: 'Fill in code',
-                        fr: 'Inserer le code'
+                        en: 'Cards config',
+                        fr: 'Configuration des cartes'
                     },
                     type: 'wwPopupForm',
                     storyData: {
                         fields: [
                             {
                                 label: {
-                                    en: 'Column per line',
-                                    fr: 'Nombre de colonnes par ligne :'
+                                    en: 'Shadow Color:',
+                                    fr: 'Couleur de l\'ombre :'
                                 },
                                 type: 'text',
-                                key: 'columnPerLine',
-                                valueData: 'section.data.thumbnailsPerLine',
+                                key: 'shadowColor',
+                                valueData: 'shadowColor',
                                 desc: {
-                                    en: 'The number of column per line',
-                                    fr: 'Le nombre de colonnes par ligne'
+                                    en: 'Example: 0 10px 40px 0 rgba(113, 124, 137, 0.2)',
+                                    fr: 'Exemple : 0 10px 40px 0 rgba(113, 124, 137, 0.2)'
                                 }
-
                             },
                             {
                                 label: {
-                                    en: 'Navigation dots color:',
-                                    fr: 'Couleur des points de navigations :'
+                                    en: 'Shadow Color After hover:',
+                                    fr: 'Couleur de l\'ombre après le hover:'
                                 },
-                                type: 'color',
-                                key: 'dotsColor',
-                                valueData: 'section.data.dotColor',
+                                type: 'text',
+                                key: 'shadowColorAfter',
+                                valueData: 'shadowColorAfter',
                                 desc: {
-                                    en: 'Choose a Nav dots color:',
-                                    fr: 'Changer la couleur des points de navigations :'
-                                },
+                                    en: 'Example: 0 16px 32px rgba(113, 124, 137, 0.4)',
+                                    fr: 'Exemple : 0 16px 32px rgba(113, 124, 137, 0.4)'
+                                }
                             },
-
+                            {
+                                label: {
+                                    en: 'Border radius in px:',
+                                    fr: 'Arrondis des coins en px :'
+                                },
+                                type: 'text',
+                                key: 'cardBorderRadius',
+                                valueData: 'cardBorderRadius',
+                                desc: {
+                                    en: 'Edit card border radius',
+                                    fr: 'Changer la bordure des coins des cartes'
+                                }
+                            },
                         ]
                     },
                     buttons: {
@@ -401,28 +366,38 @@ export default {
                 let options = {
                     firstPage: 'WWSLIDER_CUSTOM',
                     data: {
-                        columnPerLine: this.section.data.thumbnailsPerLine,
                         section: this.section,
+                        shadowColor: this.section.data.shadowColor,
+                        shadowColorAfter: this.section.data.shadowColorAfter,
+                        cardBorderRadius: this.section.data.cardBorderRadius
                     },
                 }
 
                 const result = await wwLib.wwPopups.open(options)
+                let updateSection = false;
                 if (typeof (result) != 'undefined') {
-                    if (typeof (result.dotsColor) != 'undefined') {
-                        this.section.data.dotColor = result.dotsColor
+
+                    if (typeof (result.shadowColorAfter) != 'undefined') {
+                        this.section.data.shadowColor = result.shadowColor;
+                        updateSection = true;
                     }
-                    if (result.columnPerLine) {
-                        this.section.data.thumbnailsPerLine = result.columnPerLine;
+                    if (typeof (result.shadowColorAfter) != 'undefined') {
+                        this.section.data.shadowColorAfter = result.shadowColorAfter;
+                        updateSection = true;
+                    }
+                    if (typeof (result.cardBorderRadius) != 'undefined') {
+                        this.section.data.cardBorderRadius = result.cardBorderRadius;
+                        updateSection = true;
+                    }
+
+                    if (updateSection) {
                         this.sectionCtrl.update(this.section);
-                        this.setThumbnailsPerLine();
                     }
-                    this.sectionCtrl.update(this.section);
                 }
             } catch (error) {
                 wwLib.wwLog.error('ERROR : ', error);
             }
         },
-        /* Used on mobile version to swipe */
         remove(list, options) {
             try {
                 list.splice(options.index, 1);
@@ -434,9 +409,6 @@ export default {
         },
 
         /* wwManager:end */
-
-
-
     }
 };
 </script>
@@ -455,11 +427,19 @@ export default {
         width: 100%;
     }
 
-    .top-ww-objs,
+    .top-ww-objs {
+        position: relative;
+        padding-top: 20px;
+        margin-bottom: 20px;
+        .top-ww-obj {
+            position: relative;
+        }
+    }
+
     .bottom-ww-objs {
         position: relative;
-        margin: 10px 0;
-        .top-ww-obj,
+        padding-bottom: 20px;
+        margin-top: 20px;
         .bottom-ww-obj {
             position: relative;
         }
@@ -468,6 +448,12 @@ export default {
     .container {
         position: relative;
         width: 90%;
+        border-radius: var(--cardBorderRadius);
+        box-shadow: var(--shadowColor);
+        &:hover {
+            box-shadow: var(--shadowColorAfter);
+        }
+
         @media (min-width: 768px) {
             width: 80%;
         }
@@ -488,19 +474,25 @@ export default {
             position: absolute;
             right: 0;
             top: 50%;
-            transform: translate(calc(-50% + 30px), -50%);
+            transform: translate(50%, -50%);
             cursor: pointer;
             z-index: 10;
         }
         .card {
             overflow-x: hidden;
             position: relative;
+            border-radius: var(--cardBorderRadius);
             .card-slider-background {
                 position: absolute;
                 top: 0;
                 left: 0;
                 height: 100%;
                 width: 100%;
+            }
+            .card-title {
+                position: relative;
+                width: 100%;
+                margin-top: 20px;
             }
             .container-center {
                 display: flex;
@@ -510,18 +502,12 @@ export default {
                     flex-wrap: wrap;
                 }
 
-                .card-title {
-                    position: relative;
-                    width: 100%;
-                    margin-top: 20px;
-                }
                 .thumbnail-container {
                     position: relative;
                     background-color: white;
                     min-height: 100px;
                     overflow: hidden;
                     .background {
-                        border-radius: 7px;
                         overflow: hidden;
                     }
                     .content {
@@ -553,35 +539,15 @@ export default {
             }
         }
     }
+}
 
-    .content-dots-wrapper {
-        display: flex;
-        list-style: none;
-        justify-content: center;
-        position: relative;
-        padding-bottom: 15px;
-        margin-top: 20px;
-
-        .content-dot {
-            margin-right: 15px;
-            border-radius: 100%;
-            border-width: 2px;
-            border-style: solid;
-            .dot {
-                cursor: pointer;
-                width: 15px;
-                height: 15px;
-                pointer-events: all;
-            }
-        }
-    }
-
-    .mobile-wrapper {
-        display: block;
-        position: relative;
-        @media (min-width: 1024px) {
-            display: none;
+/* wwManager:start */
+.ww-editing {
+    .container {
+        &:hover {
+            transform: none !important;
         }
     }
 }
+/* wwManager:end */
 </style>
